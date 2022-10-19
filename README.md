@@ -75,7 +75,13 @@ If you already have an environment up and running (Standalone Envoy, K8s, or Ist
 
 ### Quickstarts
 <details>
-  <summary>Envoy Quickstart</summary>
+  <summary>Raw Configs</summary>
+Diff your Envoy or Istio yaml against the [https://github.com/leaksignal/leaksignal/tree/master/examples/envoy](examples).
+</details>
+  
+
+<details>
+  <summary>Envoy Docker Quickstart</summary>
 
 Docker commands to run an Envoy proxy with LeakSignal installed. 
 
@@ -96,7 +102,7 @@ CMD ["/usr/local/bin/envoy", "-c", "/etc/envoy.yaml"]
 </details>
 
 <details>
-  <summary>Envoy-Local Quickstart (no cloud connection)</summary>
+  <summary>Envoy-Local Docker Quickstart (no cloud connection)</summary>
 
 Docker commands to run an Envoy proxy with LeakSignal installed. 
 * This configuration runs LeakSignal in "local" mode where metrics are only exported in the running Envoy instance. 
