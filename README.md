@@ -76,6 +76,7 @@ If you already have an environment up and running (Standalone Envoy, K8s, or Ist
 ### Quickstarts
 <details>
   <summary>Raw Configs</summary>
+  
 Diff your Envoy or Istio configs against the [examples](https://github.com/leaksignal/leaksignal/tree/master/examples/).
 </details>
   
