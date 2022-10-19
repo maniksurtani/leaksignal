@@ -19,7 +19,7 @@ LeakSignal provides observability by generating metrics (or [statistics](https:/
 ### Features
 * Fast, inline Layer 7 request/response analysis.
 * Easy to configure rules ("L7 policy") for detecting and analyzing sensitive data (e.g. PII) leakage.
-  * Detect part numbers, account numbers, patient info, grades, dates, email addresses, large arrays, etc. You can write your own or use our constantly evolving <a href="somewhere">ruleset</a> library (contributions welcome).
+  * Detect part numbers, account numbers, patient info, grades, dates, email addresses, large arrays, etc. You can write your own or use our constantly evolving <a href="https://github.com/leaksignal/leaksignal/tree/master/examples/policies">ruleset</a> library (contributions welcome).
 * Cloud dashboard with policy editor, monitoring, and alerting.
 * Analysis metrics can be exposed via Envoy and thus reflected wherever Envoy metrics are configured to land (OpenTelemetry, Prometheus, etc.)
 
@@ -54,7 +54,7 @@ LeakSignal Command (the cloud dashboard) provides visibility of data types and s
 </p>
 
 ### Implementation
-Built with Rust and deployed as WebAssembly, LeakSignal natively runs on proxies and API Gateways supporting [Proxy-WASM](https://bit.ly/3CKO8KP). The current implementation is tested with Envoy, which is the underlying data management plane in most service mesh offerings.
+Built with Rust and deployed as WebAssembly, LeakSignal natively runs on proxies and API Gateways supporting [Proxy-WASM](https://bit.ly/3s8SeYg). The current implementation is tested with Envoy, which is the underlying data management plane in most service mesh offerings.
 
 LeakSignal analysis can be setup in the following modes:
 * All metrics and configuration stay local in your environment
