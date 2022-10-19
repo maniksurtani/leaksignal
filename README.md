@@ -76,8 +76,10 @@ If you already have an environment up and running (Standalone Envoy, K8s, or Ist
 ### Quickstarts
 <details>
   <summary>Raw Configs</summary>
-  
-Diff your Envoy or Istio configs against the [examples](https://github.com/leaksignal/leaksignal/tree/master/examples/).
+
+1. [Register for an account](https://bit.ly/3MFtlgd) (Note: you don't need an account if you plan on only sending metrics to prometheus)
+2. Diff your Envoy or Istio configs against the [examples](https://github.com/leaksignal/leaksignal/tree/master/examples/). 
+3. Add your API key and Deployment name to your new config. 
 </details>
   
 
