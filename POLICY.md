@@ -36,7 +36,7 @@ categories:
 ```
 
 ##### Suspicious strings
-This example matches some suspicious string literals. These are usually used in JSON property names, or other structured data formats.
+This example matches some suspicious string literals. These are usually used in JSON keys, or other structured data formats.
 
 ```
 categories:
@@ -216,23 +216,23 @@ An individual endpoint block is composed of one or more of path globs for matchi
 ##### Schema of MatchConfig
 
 * `action: 'ignore' | 'alert'`: Sets action upon matching. `ignore` does nothing. `alert` forwards the match upstream. Defaults to `alert`.
-* `content_types: ContentType | ContentType[]`: `ContentType` can be `json` or `html`. Not specifying `content_types` doesn't filter responses on content type.
-* `contexts: MatchContext | MatchContext[]`: `MatchContext` can be `keys` or `values`. Interpretation depends on `content_types`.
-* `alert: AlertConfig`: The configuration of alerts for this endpoint. Onlu functional when policy is served through LeakSignal Command.
+* `content_types: ContentType | ContentType[]`: `ContentType` can be `'json'` or `'html'`. Not specifying `content_types` doesn't filter responses on content type.
+* `contexts: MatchContext | MatchContext[]`: `MatchContext` can be `'keys'` or `'values'`. Interpretation depends on `content_types`.
+* `alert: AlertConfig`: The configuration of alerts for this endpoint. Only functional when policy is served through LeakSignal Command.
 * `ignore: String[]`: A set of strings to ignore if matched in this path context.
 * `report_style: DataReportStyle?`: Specific report style for requests that match this match configuration. Overrides `report_style` at the root-level of the policy and in `EndpointConfig`. This is flattened into the `EndpointConfig`, so the `report_style` key is not present.
 
 ##### Schema of TokenExtractionConfig
 
-* `location: 'request' | 'request_cookie' | 'response'`: Which location to pull a token from, request headers, request cookies, or response headers. `response` headers are preferred as they are immune to client-side forgery.
+* `location: 'request' | 'request_cookie' | 'response'`: Which location to pull a token from: request headers, request cookies, or response headers. `response` headers are preferred as they are immune to client-side forgery.
 * `header: String`: The specific header/cookie name to extract
-* `regex: String?`: A regex to match to validate a token. If there is a first capture group, it is returned; otherwise, the entire regex match is returned. If no `regex` is specified, the entire captures token is returned.
+* `regex: String?`: A regex to match to validate a token. If there is a first capture group, it is returned; otherwise, the entire regex match is returned. If no `regex` is specified, the entire token is returned.
 
 ##### Schema of DataReportStyle
 For `EndpointConfig` and `MatchConfig`, this type is flattened into its parent containers. For the root policy level, it is not flattened.
 
-`report_style: 'raw' | 'partial_sha256' | 'sha256' | 'none'`: How to report the matched data upstream, if at all. Default is `none` in `EndpointConfig` and `MatchConfig`, and `raw` at the root policy level.
-`report_bits: usize`: Only specified if `report_style` is `partial_sha256`. Sets number of bits out of the SHA-256 hash to report. Must be between 0 and 256 exclusive.
+* `report_style: 'raw' | 'partial_sha256' | 'sha256' | 'none'`: How to report the matched data upstream, if at all. Default is `none` in `EndpointConfig` and `MatchConfig`, and `raw` at the root policy level.
+* `report_bits: usize`: Only specified if `report_style` is `partial_sha256`. Sets number of bits out of the SHA-256 hash to report. Must be between 0 and 256 exclusive.
 
 ##### Schema of AlertConfig
 
