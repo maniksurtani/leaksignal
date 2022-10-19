@@ -67,7 +67,7 @@ LeakSignal analysis can be setup in the following modes:
 If you're looking to kick the tires with a demo setup, you have 2 options:
 1. [Simple Envoy Ingress controller for K8s cluster](https://bit.ly/3s8zAzE).
     * LeakSignal is preinstalled with policy and test applications/services. 
-2. [Google's Online Boutique microservices demo for Istio](https://bit.ly/3yNtqbJ).
+2. [Google's Online Boutique microservices demo for Istio](https://bit.ly/3TATdvI).
     * Follow along with the Istio install and then add LeaskSignal.
   
 ## Getting Started with Existing Setup 
