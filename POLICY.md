@@ -67,7 +67,7 @@ categories:
 This example matches 10 digit unformatted phone numbers. It checks for the initial and last character being a non-digit then strips the first and last character from the match data with the `regex_strip` field. This is done to avoid using lookahead/lookbehind, which can be much slower.
 ```
 categories:
-  phone_number_correlate:
+  phone_number:
     Matchers:
       regex_strip: 1
       regexes:
@@ -82,7 +82,7 @@ This example matches 10 digit unformatted phone numbers within 64 bytes of the "
 
 ```
 categories:
-  phone_number_correlate:
+  phone_number_near_label:
     Correlate:
       group1:
         regex_strip: 1
