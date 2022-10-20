@@ -1,5 +1,6 @@
 use std::{
     collections::HashMap,
+    fmt::Write as FmtWrite,
     io::Write,
     pin::Pin,
     str::FromStr,
@@ -20,6 +21,7 @@ use proxy_wasm::{
     types::{Action, MetricType},
 };
 use rand::{thread_rng, Rng};
+use sha2::{Digest, Sha256};
 
 use crate::{
     config::{upstream, UpstreamConfigHandle, LEAKSIGNAL_SERVICE_NAME},
@@ -279,17 +281,26 @@ impl HttpResponseContext {
     }
 }
 
-fn extract_token_regex(value: &str, regex: Option<&RegexWrapper>) -> Option<String> {
-    match regex {
+fn extract_token_regex(value: &str, regex: Option<&RegexWrapper>, hash: bool) -> Option<String> {
+    let value = match regex {
         Some(RegexWrapper(regex)) => {
             let captures = regex.captures(value).ok()??;
             if let Some(captured) = captures.get(1) {
-                Some(captured.as_str().to_string())
+                captured.as_str()
             } else {
-                Some(captures.get(0)?.as_str().to_string())
+                captures.get(0)?.as_str()
             }
         }
-        None => Some(value.to_string()),
+        None => value,
+    };
+    if hash {
+        let mut out = String::with_capacity(64);
+        for byte in Sha256::new().chain_update(value.as_bytes()).finalize() {
+            write!(&mut out, "{byte:02X}").ok()?;
+        }
+        Some(out)
+    } else {
+        Some(value.to_string())
     }
 }
 
@@ -351,13 +362,15 @@ impl HttpContext for HttpResponseContext {
                         location: TokenExtractionSite::Request,
                         header,
                         regex,
+                        hash,
                     }) if &name == header => {
-                        data.token = extract_token_regex(&*value, regex.as_ref());
+                        data.token = extract_token_regex(&*value, regex.as_ref(), *hash);
                     }
                     Some(TokenExtractionConfig {
                         location: TokenExtractionSite::RequestCookie,
                         header,
                         regex,
+                        hash,
                     }) if name == "cookie" => {
                         for value in value.split("; ") {
                             let (name, value) = match value.split_once('=') {
@@ -365,7 +378,7 @@ impl HttpContext for HttpResponseContext {
                                 None => continue,
                             };
                             if name == header {
-                                data.token = extract_token_regex(value, regex.as_ref());
+                                data.token = extract_token_regex(value, regex.as_ref(), *hash);
                                 break;
                             }
                         }
@@ -411,8 +424,9 @@ impl HttpContext for HttpResponseContext {
                             location: TokenExtractionSite::Response,
                             header,
                             regex,
+                            hash,
                         }) if &name == header => {
-                            data.token = extract_token_regex(&*value, regex.as_ref());
+                            data.token = extract_token_regex(&*value, regex.as_ref(), *hash);
                         }
                         _ => (),
                     }

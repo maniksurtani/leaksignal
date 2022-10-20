@@ -254,6 +254,9 @@ pub struct TokenExtractionConfig {
     /// if it has one or more capture groups, the first capture group is returned
     /// otherwise, the entire match is returned
     pub regex: Option<RegexWrapper>,
+    /// if true, the token is SHA-256 hashed
+    #[serde(default)]
+    pub hash: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

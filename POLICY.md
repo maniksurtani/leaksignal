@@ -206,6 +206,7 @@ An individual endpoint block is composed of one or more of path globs for matchi
 * `location: 'request' | 'request_cookie' | 'response'`: Which location to pull a token from, request headers, request cookies, or response headers. `response` headers are preferred as they are immune to client-side forgery.
 * `header: String`: The specific header/cookie name to extract
 * `regex: String?`: A regex to match to validate a token. If there is a first capture group, it is returned; otherwise, the entire regex match is returned. If no `regex` is specified, the entire captures token is returned.
+* `hash: bool`: If true, the token is SHA-256 hashed. Defaults to false.
 
 ##### Schema of DataReportStyle
 For `EndpointConfig` and `MatchConfig`, this type is flattened into its parent containers. For the root policy level, it is not flattened.
