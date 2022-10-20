@@ -80,8 +80,6 @@ endpoints:
       phone_number: {}
       address: {}
       date_of_birth: {}
-      email: {}
-      address: {}
       phone_number_correlate: {}
   - matches: "*/product/*"
   - matches: "*/cart"
