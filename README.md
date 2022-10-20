@@ -14,7 +14,7 @@
 
 <p align="center">🔍 There are all kinds of sensitive data flowing through my services, but I don’t know which ones or what data. 🤷</p>
 
-LeakSignal provides observability metrics (or [statistics](https://bit.ly/3Twj9ca)) for sensitive data contained in request/response content. LeakSignal metrics can be consumed by Prometheus, pushed as OpenTelemetry, or collected in a centralized dashboard - giving operations engineers (SRE, DevOps, Platform Eng. etc) a new tool to help security teams combat API exploits, unknown misconfigurations and sensitive data leakage.
+LeakSignal provides observability metrics (or [statistics](https://bit.ly/3Twj9ca)) for sensitive data contained in request/response content. LeakSignal metrics can be consumed by Prometheus, pushed as OpenTelemetry, or collected in a centralized dashboard - giving operations engineers (SRE, DevOps, Platform Eng. etc) a new security tool to help combat API exploits, unknown misconfigurations and sensitive data leakage.
 
 ### Features
 * Fast, inline Layer 7 request/response analysis.
