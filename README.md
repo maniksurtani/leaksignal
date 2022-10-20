@@ -218,7 +218,13 @@ Once you login to LeakSignal COMMAND, you'll see the Sensitive Data Overview as 
 
 The following example data is from the k8s [test environment](https://bit.ly/3s8zAzE).
 <img src="assets/sd_detail.png" width="750">
+This chart shows the emission of sensitive data and exploited logic as defined by [the L7 policy](https://github.com/leaksignal/testing-environments/blob/main/kubernetes/envoy.yaml#L180).
 
+The following test pages are used to generate the alerts
+* [ssn001.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/ssn001.html) contains PII data such as Social Security and Phone Numbers. (green and purple)
+* [root.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/root.html) is an example of leaked configuration file or any response with the word "root" in it.
+* [ls.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/ls.html) and [ifconfig.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/ifconfig.html) are examples of a response that contain results from a system command being executed on the server (RCE). 
+  
 Scroll down to the data grid and click on a Response ID to examine the alerts that were generated.
 <img src="assets/alerts_w_page.png" width="750">
 
