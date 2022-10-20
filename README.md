@@ -211,14 +211,15 @@ LeakSignal defines 2 new metrics in Grafana:
 
 <img src="assets/grafana-overview.png">
 
+These metrics are visible for any API endpoint configured in the LeakSignal policy.
 
 ### View Metrics (COMMAND)
-Once you login to LeakSignal COMMAND, you'll see the Sensitive Data Overview as the default screen:
+Once you login to LeakSignal COMMAND, you'll see the Sensitive Data Overview as the default screen.
 
-The following example data is from our k8s [test environment](https://bit.ly/3s8zAzE).
+The following example data is from the k8s [test environment](https://bit.ly/3s8zAzE).
 <img src="assets/sd_detail.png" width="750">
 
-Scroll down to the data grid and click on a response ID to examine the alerts that were generated.
+Scroll down to the data grid and click on a Response ID to examine the alerts that were generated.
 <img src="assets/alerts_w_page.png" width="750">
 
 Click Heat Map in the left hand nav for a complete view of how sensitive data is accessed by IP addresses and/or authentication tokens
