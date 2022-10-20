@@ -99,6 +99,7 @@ pub async fn parse_json(
     body: &mut PipeReader,
     configuration: &IndexMap<Arc<String>, PathConfiguration>,
     matches: &mut Vec<Match>,
+    performance: impl Fn(&str, u64),
 ) -> Result<ParseResponse> {
     let (key_matcher, value_matcher) = prepare_match_state(policy, configuration);
 
@@ -106,11 +107,23 @@ pub async fn parse_json(
 
     parse::parse_json(
         body,
-        |key, start, _end| match key_matcher.do_matching(start, 0, &*key, &mut key_matches) {
+        |key, start, _end| match key_matcher.do_matching(
+            start,
+            0,
+            &*key,
+            &mut key_matches,
+            &performance,
+        ) {
             ParseResponse::Continue => None,
             ParseResponse::Block => Some(ParseResponse::Block),
         },
-        |value, start, _end| match value_matcher.do_matching(start, 0, &*value, matches) {
+        |value, start, _end| match value_matcher.do_matching(
+            start,
+            0,
+            &*value,
+            matches,
+            &performance,
+        ) {
             ParseResponse::Continue => None,
             ParseResponse::Block => Some(ParseResponse::Block),
         },

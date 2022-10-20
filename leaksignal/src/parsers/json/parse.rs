@@ -250,8 +250,8 @@ enum JsonResult<T> {
 async fn parse_json_internal<T>(
     first_byte: u8,
     input: &mut PipeReader,
-    key_out: &mut (impl FnMut(String, usize, usize) -> Option<T> + Send + Sync),
-    value_out: &mut (impl FnMut(String, usize, usize) -> Option<T> + Send + Sync),
+    key_out: &mut impl FnMut(String, usize, usize) -> Option<T>,
+    value_out: &mut impl FnMut(String, usize, usize) -> Option<T>,
 ) -> Result<JsonResult<T>> {
     let start = input.total_read().saturating_sub(1);
     match first_byte {
@@ -367,8 +367,8 @@ async fn parse_json_internal<T>(
 
 pub async fn parse_json<T>(
     input: &mut PipeReader,
-    mut key_out: impl FnMut(String, usize, usize) -> Option<T> + Send + Sync,
-    mut value_out: impl FnMut(String, usize, usize) -> Option<T> + Send + Sync,
+    mut key_out: impl FnMut(String, usize, usize) -> Option<T>,
+    mut value_out: impl FnMut(String, usize, usize) -> Option<T>,
 ) -> Result<Option<T>> {
     match parse_json_internal(
         read_u8_non_whitespace(input).await?,

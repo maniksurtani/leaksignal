@@ -1,4 +1,5 @@
 use std::{
+    cell::RefCell,
     collections::HashMap,
     fmt::Write as FmtWrite,
     io::Write,
@@ -153,6 +154,20 @@ async fn response_body_task(
     let path_policy = data.policy.expect("missing policy");
 
     let mut matches = vec![];
+    let category_performance_us: RefCell<HashMap<String, u64>> = RefCell::new(HashMap::new());
+
+    let performance_measure = |name: &str, us: u64| {
+        // we don't use entry here to avoid allocating name when unneeded
+        let mut category_performance_us = category_performance_us.borrow_mut();
+        match category_performance_us.get_mut(name) {
+            Some(x) => {
+                *x += us;
+            }
+            None => {
+                category_performance_us.insert(name.to_string(), us);
+            }
+        }
+    };
 
     let response = match data.content_type {
         ContentType::Html => {
@@ -161,6 +176,7 @@ async fn response_body_task(
                 &mut reader,
                 &path_policy.configuration,
                 &mut matches,
+                performance_measure,
             )
             .await
             {
@@ -177,6 +193,7 @@ async fn response_body_task(
                 &mut reader,
                 &path_policy.configuration,
                 &mut matches,
+                performance_measure,
             )
             .await
             {
@@ -219,6 +236,13 @@ async fn response_body_task(
         );
         metric.increment(count);
     }
+    for (category_name, us_taken) in &*category_performance_us.borrow() {
+        let metric = Metric::lookup_or_define(
+            format!("ls.{policy_path}.{category_name}.us_taken"),
+            MetricType::Histogram,
+        );
+        metric.set_value(*us_taken as u64);
+    }
 
     let packet = MatchDataRequest {
         api_key: upstream.as_ref().map(|x| x.api_key.clone()).flatten(),
@@ -242,6 +266,7 @@ async fn response_body_task(
         commit: GIT_COMMIT.to_string(),
         token: data.token.unwrap_or_default(),
         ip: data.ip,
+        category_performance_us: category_performance_us.into_inner(),
     };
 
     Some(ResponseOutputData {

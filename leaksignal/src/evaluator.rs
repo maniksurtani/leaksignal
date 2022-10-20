@@ -159,12 +159,18 @@ pub fn prepare_matches<'a>(
 }
 
 impl<'a> MatcherState<'a> {
-    pub fn evaluate(&self, source: &str) -> Vec<CategoryPreparedMatch> {
+    pub fn evaluate(
+        &self,
+        source: &str,
+        performance: &impl Fn(&str, u64),
+    ) -> Vec<CategoryPreparedMatch> {
         let mut matches = vec![];
+        let mut last_time = crate::elapsed().as_micros() as u64;
         for raw in &self.raws {
             let metadata = &raw.metadata;
             let raw = raw.raw;
             if source.len() < raw.len() {
+                last_time = crate::elapsed().as_micros() as u64;
                 continue;
             }
             let mut source_iter = source.char_indices().peekable();
@@ -190,24 +196,31 @@ impl<'a> MatcherState<'a> {
                     }
                 }
             }
+            let now = crate::elapsed().as_micros() as u64;
+            performance(&*metadata.category_name, now.saturating_sub(last_time));
+            last_time = now;
         }
 
-        {
-            for regex in &self.regexes {
-                for matching in regex.regex.find_iter(source) {
-                    let matching = matching.unwrap();
-                    if regex.ignore.iter().any(|x| x.contains(matching.as_str())) {
-                        continue;
-                    }
-                    let start = matching.start() + regex.regex_strip;
-                    let length = matching.end().saturating_sub(start + regex.regex_strip);
-                    matches.push(CategoryPreparedMatch {
-                        metadata: &regex.metadata,
-                        start,
-                        length,
-                    });
+        for regex in &self.regexes {
+            for matching in regex.regex.find_iter(source) {
+                let matching = matching.unwrap();
+                if regex.ignore.iter().any(|x| x.contains(matching.as_str())) {
+                    continue;
                 }
+                let start = matching.start() + regex.regex_strip;
+                let length = matching.end().saturating_sub(start + regex.regex_strip);
+                matches.push(CategoryPreparedMatch {
+                    metadata: &regex.metadata,
+                    start,
+                    length,
+                });
             }
+            let now = crate::elapsed().as_micros() as u64;
+            performance(
+                &*regex.metadata.category_name,
+                now.saturating_sub(last_time),
+            );
+            last_time = now;
         }
 
         matches
@@ -221,8 +234,9 @@ impl<'a> MatcherState<'a> {
         minimum_end_index: usize,
         body: &str,
         matches: &mut Vec<Match>,
+        performance: &impl Fn(&str, u64),
     ) -> ParseResponse {
-        let local_matches = self.evaluate(body);
+        let local_matches = self.evaluate(body, performance);
 
         let mut correlated_matches_first: BTreeMap<usize, SmallVec<[CategoryPreparedMatch; 2]>> =
             BTreeMap::new();
