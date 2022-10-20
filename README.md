@@ -25,7 +25,7 @@ LeakSignal provides observability metrics (or [statistics](https://bit.ly/3Twj9c
 
 ### Installation
 
-LeakSignal installs in moments as a WASM filter for Envoy, Istio, or any proxy/API gateway that supports Proxy-WASM. See Getting Started below.
+LeakSignal installs in moments as a WASM filter for Envoy, Istio, or any proxy/API gateway that supports Proxy-WASM. No CRD, no additional containers or sidecars, no other dependencies, just a WASM binary. See Getting Started below.
 
 ### Overview
 LeakSignal detects sensitive data within mesh traffic. Analysis and processing of traffic is handled inline, allowing engineers to understand sensitive data emission without sending, storing or viewing the sensitive data.
