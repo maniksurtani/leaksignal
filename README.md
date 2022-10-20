@@ -14,7 +14,7 @@
 
 <p align="center">🔍 There are all kinds of sensitive data flowing through my services, but I don’t know which ones or what data. 🤷</p>
 
-LeakSignal provides observability by generating metrics (or [statistics](https://bit.ly/3Twj9ca)) for sensitive data contained in request/response content. LeakSignal metrics can be consumed by Prometheus, pushed as OpenTelemetry, or collected in a centralized dashboard.
+LeakSignal provides observability metrics (or [statistics](https://bit.ly/3Twj9ca)) for sensitive data contained in request/response content. LeakSignal metrics can be consumed by Prometheus, pushed as OpenTelemetry, or collected in a centralized dashboard - giving operations engineers (SRE, DevOps, Platform Eng. etc) a new tool to help security teams combat API exploits, unknown misconfigurations and sensitive data leakage.
 
 ### Features
 * Fast, inline Layer 7 request/response analysis.
@@ -28,7 +28,7 @@ LeakSignal provides observability by generating metrics (or [statistics](https:/
 LeakSignal installs in moments as a WASM filter for Envoy, Istio, or any proxy/API gateway that supports Proxy-WASM. See Getting Started below.
 
 ### Overview
-LeakSignal detects sensitive data within mesh traffic. Analysis and processing of traffic is handled inline, allowing engineers to understand sensitive data leaks without sending, storing or viewing the sensitive data.
+LeakSignal detects sensitive data within mesh traffic. Analysis and processing of traffic is handled inline, allowing engineers to understand sensitive data emission without sending, storing or viewing the sensitive data.
 <p align="center">
   <img style="max-width:75%" src="assets/mesh-overview2.png">
 </p>
@@ -218,6 +218,7 @@ Once you login to LeakSignal COMMAND, you'll see the Sensitive Data Overview as 
 
 The following example data is from the k8s [test environment](https://bit.ly/3s8zAzE).
 <img src="assets/sd_detail.png" width="750">
+
 This chart shows the emission of sensitive data and exploited logic as defined by [the L7 policy](https://github.com/leaksignal/testing-environments/blob/main/kubernetes/envoy.yaml#L180).
 
 The following test pages are used to generate the alerts
