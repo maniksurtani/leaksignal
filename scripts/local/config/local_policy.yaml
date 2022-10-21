@@ -30,10 +30,13 @@ categories:
       group1:
         regexes:
           - "[^0-9][0-9]{10}[^0-9]"
+        regex_strip: 1
       group2:
         raw:
           - phone
+        case_insensitive: true
       max_distance: 64
+      interest: group1
 endpoints:
   - matches: "**"
     config:

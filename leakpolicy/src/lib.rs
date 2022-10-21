@@ -164,6 +164,10 @@ fn is_zero(x: &usize) -> bool {
     *x == 0
 }
 
+fn is_false(x: &bool) -> bool {
+    !*x
+}
+
 #[derive(Default, Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct MatchGroup {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -176,6 +180,8 @@ pub struct MatchGroup {
     pub direct: Vec<String>,
     #[serde(default, skip_serializing_if = "HashSet::is_empty")]
     pub ignore: HashSet<String>,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub case_insensitive: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

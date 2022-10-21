@@ -35,6 +35,7 @@ pub struct MatchRegex<'a> {
 pub struct MatchRaw<'a> {
     metadata: MatcherMetadata,
     raw: &'a str,
+    case_insensitive: bool,
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -73,12 +74,14 @@ fn prepare_match_group<'a>(
         regex_strip,
         direct,
         ignore,
+        case_insensitive,
     } = match_group;
 
     for raw in raw {
         state.raws.push(MatchRaw {
             metadata: metadata.clone(),
             raw: &**raw,
+            case_insensitive: *case_insensitive,
         });
     }
 
@@ -168,6 +171,7 @@ impl<'a> MatcherState<'a> {
         let mut last_time = crate::elapsed().as_micros() as u64;
         for raw in &self.raws {
             let metadata = &raw.metadata;
+            let case_insensitive = raw.case_insensitive;
             let raw = raw.raw;
             if source.len() < raw.len() {
                 last_time = crate::elapsed().as_micros() as u64;
@@ -178,21 +182,45 @@ impl<'a> MatcherState<'a> {
                 if i > source.len() - raw.len() {
                     break;
                 }
-                if source.as_bytes()[i + raw.len() - 1] == raw.as_bytes()[raw.len() - 1]
-                    && source[i..].starts_with(raw)
-                {
-                    matches.push(CategoryPreparedMatch {
-                        start: i,
-                        length: raw.len(),
-                        metadata,
-                    });
-                    let target = i + raw.len();
-                    while let Some((i, _)) = source_iter.peek() {
-                        if *i < target {
-                            source_iter.next();
-                            continue;
+                let last_source_byte = source.as_bytes()[i + raw.len() - 1];
+                let last_raw_byte = raw.as_bytes()[raw.len() - 1];
+                let last_char_matches = if case_insensitive {
+                    if last_source_byte < 128 && last_raw_byte < 128 {
+                        let source_char =
+                            char::from_u32(last_source_byte as u32).expect("ascii is not utf8?");
+                        let raw_char =
+                            char::from_u32(last_raw_byte as u32).expect("ascii is not utf8?");
+                        source_char.to_ascii_lowercase() == raw_char.to_ascii_lowercase()
+                    } else {
+                        // do a full unicode check
+                        true
+                    }
+                } else {
+                    last_source_byte == last_raw_byte
+                };
+                if last_char_matches {
+                    let matches_completely = if case_insensitive {
+                        source
+                            .get(i..i + raw.len())
+                            .map(|x| x.eq_ignore_ascii_case(raw))
+                            .unwrap_or(false)
+                    } else {
+                        source[i..].starts_with(raw)
+                    };
+                    if matches_completely {
+                        matches.push(CategoryPreparedMatch {
+                            start: i,
+                            length: raw.len(),
+                            metadata,
+                        });
+                        let target = i + raw.len();
+                        while let Some((i, _)) = source_iter.peek() {
+                            if *i < target {
+                                source_iter.next();
+                                continue;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
@@ -369,9 +397,8 @@ impl<'a> MatcherState<'a> {
                                 PolicyAction::Block => Action::Block,
                             } as i32,
                         });
-                        group2_index += 1;
+                        break;
                     }
-                    break;
                 }
             }
         }
