@@ -63,6 +63,20 @@ categories:
         - password_hash
 ```
 
+##### Case Insensitive Suspicious strings
+Similar to above, this matches suspicious string literals. The `case_sensitive` field marks the raw (and only raw) match rules to ignore ASCII case.
+
+```
+categories:
+  suspicious_strings:
+    Matchers:
+      raw:
+        - credit_card
+        - social_security_number
+        - password_hash
+      case_insensitive: true
+```
+
 ##### Unformatted phone numbers
 This example matches 10 digit unformatted phone numbers. It checks for the initial and last character being a non-digit then strips the first and last character from the match data with the `regex_strip` field. This is done to avoid using lookahead/lookbehind, which can be much slower.
 ```
