@@ -14,21 +14,38 @@
 
 <p align="center">🔍 There are all kinds of sensitive data flowing through my services, but I don’t know which ones or what data. 🤷</p>
 
-LeakSignal provides observability by generating metrics (or [statistics](https://bit.ly/3Twj9ca)) for sensitive data contained in request/response content. LeakSignal metrics can be consumed by Prometheus, pushed as OpenTelemetry, or collected in a centralized dashboard.
+LeakSignal provides observability metrics (or [statistics](https://bit.ly/3Twj9ca)) for sensitive data contained in request/response content. LeakSignal metrics can be consumed by Prometheus, pushed as OpenTelemetry, or collected in a centralized dashboard - giving operations engineers (SRE, DevOps, Platform Eng. etc) a new security tool to help combat API exploits, unknown misconfigurations and sensitive data leakage.
 
-### Features
+## Features
 * Fast, inline Layer 7 request/response analysis.
 * Easy to configure rules ("L7 policy") for detecting and analyzing sensitive data (e.g. PII) leakage.
   * Detect part numbers, account numbers, patient info, grades, dates, email addresses, large arrays, etc. You can write your own or use our constantly evolving <a href="https://github.com/leaksignal/leaksignal/tree/master/examples/policies">ruleset</a> library (contributions welcome).
 * Cloud dashboard with policy editor, monitoring, and alerting.
 * Analysis metrics can be exposed via Envoy and thus reflected wherever Envoy metrics are configured to land (OpenTelemetry, Prometheus, etc.)
 
-### Installation
+## Installation
 
-LeakSignal installs in moments as a WASM filter for Envoy, Istio, or any proxy/API gateway that supports Proxy-WASM. See Getting Started below.
+LeakSignal installs in moments as a WASM filter for Envoy, Istio, or any proxy/API gateway that supports Proxy-WASM. No CRD, no additional containers or sidecars, no other dependencies, just a WASM binary. See Getting Started below.
 
-### Overview
-LeakSignal detects sensitive data within mesh traffic. Analysis and processing of traffic is handled inline, allowing engineers to understand sensitive data leaks without sending, storing or viewing the sensitive data.
+## Table of Contents
+* [Overview](#overview)
+  * [Sentry](#leaksignal-sentry)
+  * [Command](#leaksignal-command)
+  * [Implementation](#implementation)
+* [Getting Started](#getting-started)
+  * [Getting Started with a demo application](#getting-started-with-a-demo-application)
+  * [Getting started with an existing setup](#getting-started-with-existing-setup)
+    * [Configuration Quickstarts](#quickstarts)
+  * [Verify Setup](#verify-proper-setup)
+  * [View Metrics with Prometheus & Grafana](#view-metrics-prometheus--grafana)
+  * [View Metrics in Command cloud dashboard](#view-metrics-command)
+  * [Test and configure L7 Policy](#test-and-configure-l7-policy)
+* [Community / How to Contribute](#community--how-to-contribute)
+* [License](#license)
+* [Commercial Support](#commercial-support)
+         
+## Overview
+LeakSignal detects sensitive data within mesh traffic. Analysis and processing of traffic is handled inline, allowing engineers to understand sensitive data emission without sending, storing or viewing the sensitive data.
 <p align="center">
   <img style="max-width:75%" src="assets/mesh-overview2.png">
 </p>
@@ -62,7 +79,9 @@ LeakSignal analysis can be setup in the following modes:
   * Sensitive data are sent to COMMAND by default.
   * Specific endpoints, match rules, or the entire policy can opt-in to send raw sensitive data, low-bit subsets of SHA-256 hashes for low-entropy data (i.e. credit cards, phone numbers), or no representation of the matched data at all.
 
-## Getting Started with a Demo
+## Getting Started
+
+### Getting Started with a Demo application
 
 If you're looking to kick the tires with a demo setup, you have 2 options:
 1. [Simple Envoy Ingress controller for K8s cluster](https://bit.ly/3s8zAzE).
@@ -70,10 +89,10 @@ If you're looking to kick the tires with a demo setup, you have 2 options:
 2. [Google's Online Boutique microservices demo for Istio](https://bit.ly/3TATdvI).
     * Follow along with the Istio install and then add LeakSignal.
   
-## Getting Started with Existing Setup 
+### Getting Started with Existing Setup 
 If you already have an environment up and running (Standalone Envoy, K8s, or Istio) where you'd like to install LeakSignal, use the following quick starts.
 
-### Quickstarts
+#### Quickstarts
 <details>
   <summary>Raw Configs</summary>
 
@@ -179,7 +198,7 @@ kubectl delete --all pod
 > * [View prometheus metrics in grafana](#view-metrics-prometheus--grafana)
 </details>
 
-### Verify Proper Setup
+#### Verify Proper Setup
 After you've installed the LeakSignal filter, you can check the logs to see how things are running:
 
 For Envoy standalone run:
@@ -211,14 +230,22 @@ LeakSignal defines 2 new metrics in Grafana:
 
 <img src="assets/grafana-overview.png">
 
+These metrics are visible for any API endpoint configured in the LeakSignal policy.
 
 ### View Metrics (COMMAND)
-Once you login to LeakSignal COMMAND, you'll see the Sensitive Data Overview as the default screen:
+Once you login to LeakSignal COMMAND, you'll see the Sensitive Data Overview as the default screen.
 
-The following example data is from our k8s [test environment](https://bit.ly/3s8zAzE).
+The following example data is from the k8s [test environment](https://bit.ly/3s8zAzE).
 <img src="assets/sd_detail.png" width="750">
 
-Scroll down to the data grid and click on a response ID to examine the alerts that were generated.
+This chart shows the emission of sensitive data and exploited logic as defined by [the L7 policy](https://github.com/leaksignal/testing-environments/blob/main/kubernetes/envoy.yaml#L180).
+
+The following test pages are used to generate the alerts
+* [ssn001.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/ssn001.html) contains PII data such as Social Security and Phone Numbers. (green and purple)
+* [root.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/root.html) is an example of leaked configuration file or any response with the word "root" in it.
+* [ls.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/ls.html) and [ifconfig.html](https://github.com/leaksignal/testing-environments/blob/main/servers/node/public/node/ifconfig.html) are examples of a response that contain results from a system command being executed on the server (RCE). 
+  
+Scroll down to the data grid and click on a Response ID to examine the alerts that were generated.
 <img src="assets/alerts_w_page.png" width="750">
 
 Click Heat Map in the left hand nav for a complete view of how sensitive data is accessed by IP addresses and/or authentication tokens
