@@ -68,7 +68,7 @@ If you're looking to kick the tires with a demo setup, you have 2 options:
 1. [Simple Envoy Ingress controller for K8s cluster](https://bit.ly/3s8zAzE).
     * LeakSignal is preinstalled with policy and test applications/services. 
 2. [Google's Online Boutique microservices demo for Istio](https://bit.ly/3TATdvI).
-    * Follow along with the Istio install and then add LeaskSignal.
+    * Follow along with the Istio install and then add LeakSignal.
   
 ## Getting Started with Existing Setup 
 If you already have an environment up and running (Standalone Envoy, K8s, or Istio) where you'd like to install LeakSignal, use the following quick starts.
