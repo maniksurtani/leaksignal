@@ -18,8 +18,8 @@ LeakSignal provides observability metrics (or [statistics](https://bit.ly/3Twj9c
 
 ## Features
 * Fast, inline Layer 7 request/response analysis.
-* Easy to configure rules ("L7 policy") for detecting and analyzing sensitive data (e.g. PII) leakage.
-  * Detect part numbers, account numbers, patient info, grades, dates, email addresses, large arrays, etc. You can write your own or use our constantly evolving <a href="https://github.com/leaksignal/leaksignal/tree/master/examples/policies">ruleset</a> library (contributions welcome).
+* Easy to configure rules ("L7 policy") for detecting and analyzing leakage of sensitive data such as personally identifiable information (PII), and more.
+  * Detect bank account details, credit card numbers, part numbers, account numbers, patient info, grades, dates, email addresses, large arrays, etc. You can write your own or use our constantly evolving <a href="https://github.com/leaksignal/leaksignal/tree/master/examples/policies">ruleset</a> library (contributions welcome).
 * Cloud dashboard with policy editor, monitoring, and alerting.
 * Analysis metrics can be exposed via Envoy and thus reflected wherever Envoy metrics are configured to land (OpenTelemetry, Prometheus, etc.)
 
